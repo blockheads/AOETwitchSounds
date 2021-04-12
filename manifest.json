@@ -3,7 +3,7 @@
     "description": "Plays AOE sound effects for twitch chat",
     "version": "1.0",
     "manifest_version": 2,
-    "web_accessible_resources": ["sounds/Yes.ogg"],
+    "web_accessible_resources": ["sounds/*.ogg"],
     "background": {
       "scripts": [
         "background.js"
