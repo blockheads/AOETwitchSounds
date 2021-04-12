@@ -1,5 +1,3 @@
-waitForChat();
-
 // this is how many taunts we have available, we assume that we have 
 // 1- this specified number of taunts all initialized in the 'sounds' folder.
 // these are the first 42 taunts in the initial edition of the game
@@ -23,12 +21,88 @@ SOUND_FILE_SUFFIX = ".ogg"
 // this is the sound volume of each taunt, just default to 0 until the plugin
 sound_volume = 0.0;
 
+tauntObserverRunning=false;
+volumeObserverRunning=false;
+
+SLEEP_TIMEOUT = 1000;
+
+//rootObserver();
+
+// here we observe the root to switch on our other obserevers if possible
+/*
+    There might be a better way to detect updates on the webpage than using this pattern
+    but whatever...
+*/
+// async function rootObserver(){
+
+//     // we just observer the whole webpage with the root observer
+//     var target = document;
+
+//     console.log("loaded root observer: " + target);
+
+//     var observer = new MutationObserver(function(mutations) {  
+//         mutations.forEach(function(mutation) {
+
+//             //console.log("found change in root owo");
+//             if(!tauntObserverRunning){
+
+//                 // attempt to get element needed for taunt Observer on modification to DOM
+//                 tauntObserver();
+
+//             }
+//             else if(!volumeObserverRunning){
+//                 volumeObserver();
+//             }
+//             else{
+//                 // kill our observer
+//                 console.log("closing root observer...");
+//                 observer.disconnect();
+//             }
+//         });
+//     });
+
+//     var config = { attributes: true, childList: true, characterData: true, subtree: true };
+//     observer.observe(target, config);
+// }
+
+loadObserevers();
+
+function loadObserevers(){
+    console.log("attempting to load observers")
+    if(!volumeObserverRunning)
+        volumeObserver();
+    if(!tauntObserverRunning)
+        waitForChat();
+}
+
+// this is our listener for URL changes
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+      // listen for messages sent from background.js
+
+      // every time we change the url just try to load observers
+      if (request.message === 'changedURL') {
+            volumeObserverRunning = false;
+            tauntObserverRunning = false;
+            loadObserevers();
+      }
+  });
+
 /*
     This function is used to observer the overall volume of the twitch stream
     DOM, and edit the taunt volume based on the volume slider
 */
 function volumeObserver(){
     var target = document.querySelector(TWITCH_VOLUME_SLIDER_CLASS);
+    if(target)
+        volumeObserverRunning = true;
+    else{
+        console.log("got null target for volume...");
+        return;
+
+    }
+
+    console.log("got volume obserever target: " + target);
 
     // initialize our volume to this target
     sound_volume = target.getAttribute("value");
@@ -49,9 +123,18 @@ function volumeObserver(){
     Determines the proper taunt to play by monitoring every twitch chat
     message.
 */
-function tauntObserver() {
+async function tauntObserver() {
+
 
     var target = document.querySelector(TWITCH_CHAT_CLASS);
+    if(target)
+        tauntObserverRunning = true;
+    else{
+        console.log("got null target for taunt...");
+        return;
+    }
+
+    console.log("got taunt obserever target: " + target);
 
     var observer = new MutationObserver(function(mutations) {  
         mutations.forEach(function(mutation) {
@@ -74,8 +157,8 @@ function tauntObserver() {
                 if(!(taunt === "")){
                     playTaunt(taunt);
                 }
-                else
-                    console.log("message did not contain a taunt.");
+                //else
+                    //console.log("message did not contain a taunt.");
             }
                 
                 
@@ -97,26 +180,19 @@ function extractChatMessage(chatNode){
     return messageNode.textContent;
 }
 
-function documentOnLoad(){
-
-
-    // here we initialize our observers
-    tauntObserver();
-    volumeObserver();
-
-}
 
 function waitForChat() {
     const time0 = Date.now();
     const int = setInterval(() => {
-        if (Date.now() - time0 > 10 * 1000) clearInterval(int);
+        if (Date.now() - time0 > 3 * 2000) clearInterval(int);
         chat = document.querySelector(TWITCH_CHAT_CLASS);
-
+        console.log("waited for chat failed.");
         if (chat) {
             clearInterval(int);
-            documentOnLoad();
+            console.log("waited for chat succesfull.");
+            tauntObserver();
         }
-    }, 500);
+    }, 2000);
 }
 
 // this function attempts to parse a message ad executure the corresponding AOE sound
@@ -128,7 +204,7 @@ function parseMessage(message){
     // aoe taunts appear to work, we can do other behaviors later
     var potentialTaunt = parseInt(message);
     let new_taunt_size = NEW_TAUNTS.length - 1;
-    console.log("size of NEW_TAUNTS: " + new_taunt_size);
+
     // first we check the new taunts as they are the largest
     for(var i=NEW_TAUNTS[NEW_TAUNTS.length - 1]; i >= 0; i--){
         if(i == potentialTaunt)
