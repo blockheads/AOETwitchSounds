@@ -2,7 +2,12 @@ waitForChat();
 
 // this is how many taunts we have available, we assume that we have 
 // 1- this specified number of taunts all initialized in the 'sounds' folder.
-TAUNT_SIZE = 12;
+// these are the first 42 taunts in the initial edition of the game
+OLD_TAUNT_SIZE = 42;
+
+// new taunts, I am only using 3 right now maybe add more but a lot of them don't get use
+// very often in the chat
+NEW_TAUNTS = [103,104,105];
 
 // this is what we use to observer the DOM to get twitch chat updates.
 TWITCH_CHAT_CLASS = ".chat-scrollable-area__message-container";
@@ -122,8 +127,16 @@ function parseMessage(message){
     // I decided to use a parseInt to make it behave true to the way
     // aoe taunts appear to work, we can do other behaviors later
     var potentialTaunt = parseInt(message);
+    let new_taunt_size = NEW_TAUNTS.length - 1;
+    console.log("size of NEW_TAUNTS: " + new_taunt_size);
+    // first we check the new taunts as they are the largest
+    for(var i=NEW_TAUNTS[NEW_TAUNTS.length - 1]; i >= 0; i--){
+        if(i == potentialTaunt)
+            return String(i);
+    }
+
     // first we check the front
-    for(var i=TAUNT_SIZE; i >= 1; i--){
+    for(var i=OLD_TAUNT_SIZE; i >= 1; i--){
 
         if(i == potentialTaunt)
             return String(i);
