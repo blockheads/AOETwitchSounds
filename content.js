@@ -7,13 +7,44 @@ TAUNT_SIZE = 12;
 // this is what we use to observer the DOM to get twitch chat updates.
 TWITCH_CHAT_CLASS = ".chat-scrollable-area__message-container";
 TWITCH_CHAT_MESSAGE_CLASS = ".text-fragment";
+// DOM for volume slider
+TWITCH_VOLUME_SLIDER_CLASS = ".tw-range"
 
 // path to our sounds folder
 SOUNDS_PATH = "sounds/"
 // OGG suffix
 SOUND_FILE_SUFFIX = ".ogg"
 
-function initiateObservers() {
+// this is the sound volume of each taunt, just default to 0 until the plugin
+sound_volume = 0.0;
+
+/*
+    This function is used to observer the overall volume of the twitch stream
+    DOM, and edit the taunt volume based on the volume slider
+*/
+function volumeObserver(){
+    var target = document.querySelector(TWITCH_VOLUME_SLIDER_CLASS);
+
+    // initialize our volume to this target
+    sound_volume = target.getAttribute("value");
+
+    var observer = new MutationObserver(function(mutations) {  
+        mutations.forEach(function(mutation) {
+            sound_volume = mutation.target.getAttribute("value");
+        });
+    });
+
+    // configuration of the observer:
+    var config = { attributes: true, childList: false, characterData: false };
+
+    observer.observe(target, config);
+}
+
+/*
+    Determines the proper taunt to play by monitoring every twitch chat
+    message.
+*/
+function tauntObserver() {
 
     var target = document.querySelector(TWITCH_CHAT_CLASS);
 
@@ -62,7 +93,12 @@ function extractChatMessage(chatNode){
 }
 
 function documentOnLoad(){
-    initiateObservers();
+
+
+    // here we initialize our observers
+    tauntObserver();
+    volumeObserver();
+
 }
 
 function waitForChat() {
@@ -117,7 +153,7 @@ function playTaunt(tauntString){
     console.log("playing taunt: " + filePath);
     
     var tauntAudio = new Audio(chrome.extension.getURL(filePath));
-    tauntAudio.volume = .2;
+    tauntAudio.volume = sound_volume;
     tauntAudio.play();
 
 }
