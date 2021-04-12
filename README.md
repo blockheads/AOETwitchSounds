@@ -10,5 +10,5 @@ need to add this
 This was made entirely in javascript as a chrome extension, for more details go to https://developer.chrome.com/docs/extensions/
 
 ## features
-- Dyanmic volume, volume is based off of twitch stream volume for the taunts
+- Dynamic volume, volume is based off of twitch stream volume for the taunts
 - Same system of playing taunt effects as the actual game as far as I can tell.
