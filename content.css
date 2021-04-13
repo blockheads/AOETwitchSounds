@@ -1,0 +1,90 @@
+.aoe2soundslider {
+  -webkit-appearance: none;
+  width: 80%;
+  height: 2px;
+  border-radius: 5px;
+  background: #d3d3d3;
+  outline: none;
+  transition: .2s;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.aoe2soundslider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background: #d3d3d3;
+  /*appearance: none;*/
+  width: 16px;
+  height: 16px;
+  border-radius: 16px;  
+  box-shadow: .5px .5px;
+  /*background: url('images/vill.jpg');*/
+  cursor: pointer;
+}
+
+.aoe2soundslider::-moz-range-thumb {
+  width: 23px;
+  height: 24px;
+  border: 1px;
+  /*background: url('images/vill.jpg');*/
+  cursor: pointer;
+}
+
+.aoe2SliderButton{
+    width:25px;
+    height:25px;
+    opacity: .9;
+    margin-left: 5px;
+    padding: 4px;
+    border-radius: 5px;
+
+}
+
+.aoe2SliderButton:hover{
+  background: rgba(255,255,255,.3);
+  cursor: pointer;
+}
+
+div.hoverbubble {
+  position: relative;
+  text-decoration: none;
+  width:25px;
+  height:25px;
+  margin-right: 5px;
+}
+div.hoverbubble span {display: none;}
+div.hoverbubble:hover span {
+  user-select: none;
+	display: block;
+	position: absolute;
+	padding-bottom: 10px;
+  padding-left: 2px;
+  padding-right: 2px;
+	content: attr(title);
+	min-width: px;
+	text-align: center;
+	width: fill;
+	height: 20px;
+	white-space: nowrap;
+	top: -30px;
+	background: rgba(255,255,255,.8);
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	color: rgb(0, 0, 0);
+	font-size: 14;
+	font-family: "Inter","Roobert","Helvetica","Neue";
+}
+div.hoverbubble:hover span:after {
+	position: absolute;
+	display: block;
+	content: "";
+	border-color: rgba(255,255,255,.8) transparent transparent transparent;
+	border-style: solid;
+	border-width: 5px;
+	height: 0;
+	width: 0;
+	position: absolute;
+	bottom: -10px;
+	left: 15px;
+}

@@ -21,10 +21,24 @@ SOUND_FILE_SUFFIX = ".ogg"
 // this is the sound volume of each taunt, just default to 0 until the plugin
 sound_volume = 0.0;
 
+aoeSound_volume = 0.5;
+
+// mute button for aoeSound
+aoeSound_muted = false;
+
+// scalar to volume, probably add slider for this
+VOLUME_SCALAR = 2.0;
+
+AOE2_SLIDER_CLASS = ".aoe2soundslider";
+
+// here is the class for the volume slider, I want to add my custom volume slider for AOE sound effects next to it
+TWITCH_VOLUME_CONTROLS_DIV = ".player-controls__left-control-group";
+
 tauntObserverRunning=false;
 volumeObserverRunning=false;
 
 SLEEP_TIMEOUT = 1000;
+
 
 //rootObserver();
 
@@ -88,12 +102,213 @@ chrome.runtime.onMessage.addListener(
       }
   });
 
+
+function displayVolumeSlider(){
+
+    var volumeControls = document.querySelector(TWITCH_VOLUME_CONTROLS_DIV);
+
+    
+    if(volumeControls){
+       // var copy_slider = document.querySelector(".volume-slider__slider-container").cloneNode(true);
+
+        // couldn't figure out how to copy the twitch slider so just making my own with the same css LOL
+        // if you are reading this and are like WTF, yeah this is pretty bad LOL
+
+        var div = document.createElement("div");
+        div.className = "tw-flex";
+        div.classList.add(["tw-full-width", "tw-relative", "tw-z-above"]);
+        
+        var slider = document.createElement("input");
+        slider.className = "aoe2soundslider";
+        // slider.classList.add("tw-range");
+        slider.id = "player-volume-slider-AOE2TauntSounds";
+        slider.type = "range"
+        slider.min = "0";
+        slider.max = "1";
+        slider.step = "0.01";
+        slider.dataset.target = "player-volume-slider";
+        slider.dataset.visible = "true";
+
+        // idk more div shit
+        var lowerDiv = document.createElement("div");
+        lowerDiv.className = "tw-absolute";
+        lowerDiv.classList.add(["tw-border-radius-large", "tw-bottom-0", "tw-flex", 
+        "tw-flex-column", "tw-full-width", "tw-justify-content-center", "tw-range__fill", 
+        "tw-range__fill--overlay", "tw-top-0", "tw-z-below"]);
+      
+        var lowerDiv2 = document.createElement("div");
+        lowerDiv2.className = "tw-border-radius-large";
+        lowerDiv2.classList = ["tw-range__fill-container"];
+
+        var lowerDiv3 = document.createElement("div");
+        lowerDiv3.className = "tw-range__fill-value-selector";
+
+        lowerDiv.appendChild(lowerDiv3);
+        lowerDiv.appendChild(lowerDiv2);
+
+        var label = document.createElement("label");
+        label.htmlFor = "player-volume-slider-AOE2TauntSounds";
+        label.className = "tw-hide-accessible";
+        label.innerHTML = "Volume";
+
+        var parentDiv = document.createElement("div");
+        parentDiv.className = "tw-align-items-center";
+        parentDiv.classList.add(["tw-flex", "tw-full-height"]);
+        
+
+        div.appendChild(slider);
+        div.appendChild(lowerDiv);
+
+        parentDiv.appendChild(div);
+        parentDiv.appendChild(label);
+        
+        var superParent = document.createElement("div");
+        superParent.className = "ScTransitionBase-eg1bd7-0jRVJEm";
+        superParent.classList = ["tw-transition", "volume-slider__slider-container"];
+
+        superParent.appendChild(parentDiv);
+
+        // add in the icon
+        var aoe2SoundIcon = document.createElement("img");
+        aoe2SoundIcon.className = "aoe2SliderButton";
+        aoe2SoundIcon.src = chrome.extension.getURL("images/aoe_icon_active.png");
+
+        // if we are muted just set these values to 0
+
+        var hiddenMessage = document.createElement("span");
+        hiddenMessage.innerHTML = "Mute(m)";
+        
+        mute(aoe2SoundIcon, slider, hiddenMessage, localStorage['aoeSoundMuted']);
+        
+
+        // console.log("child: " + child.id);
+        // if(child.id == 'aoeVolSlider'){
+        //     return;
+        // }
+
+        // making a custom div for effects similar to twitch's volume control
+
+
+        // tooltip for sound icon
+        var tooltip = document.createElement("div");
+        tooltip.className = "hoverbubble";
+
+        
+        tooltip.appendChild(aoe2SoundIcon);
+        tooltip.appendChild(hiddenMessage);
+        volumeControls.appendChild(tooltip);
+        volumeControls.appendChild(superParent);
+        
+
+        console.log("appended slider..");
+
+        // for(var child=volumeControls.firstChild; child!==null; child=child.nextSibling) {
+            
+        //     return;
+        // }
+
+        // here we update our value based on the slider input
+        slider.oninput = function() {
+            aoeSound_volume = this.value;
+        }
+
+        // here we update the key value store for the slider
+        slider.onchange = function(){
+            
+            if(aoeSound_muted){
+                mute(aoe2SoundIcon, slider, hiddenMessage, false);
+            }
+            else{
+                if(aoeSound_volume == 0){
+                    mute(aoe2SoundIcon, slider, hiddenMessage, true);
+                    return;
+                }
+            }
+
+            localStorage['aoeSoundVolume'] = aoeSound_volume;
+            console.log('Slider value is cached to ' + aoeSound_volume);
+
+        }
+
+        // this is just for the css to display the slider when hovering the sound icon
+        aoe2SoundIcon.onmouseover = function(){
+            slider.style.opacity = 1;
+        }
+        
+        aoe2SoundIcon.onmouseleave = function(){
+            slider.style.opacity = 0;
+        }
+
+        // for muting
+        aoe2SoundIcon.onclick = function(){
+            aoeSound_muted = !aoeSound_muted;
+            mute(aoe2SoundIcon, slider, hiddenMessage, aoeSound_muted);
+            
+        }
+
+        slider.onmouseover = function(){
+            slider.style.opacity = 1;
+        }
+        
+        slider.onmouseleave = function(){
+            slider.style.opacity = 0;
+        }
+    }
+}
+
+/* 
+Little helper function for handling the mute value
+*/
+function mute(aoe2SoundIcon, slider, hiddenMessage, muted){
+
+    // have to deal with webpage caching of booleans lol
+    if(muted == "true"){
+        muted = true;
+    }
+    else if(muted == "false"){
+        muted = false;
+    }
+
+    aoeSound_muted = muted;
+    localStorage['aoeSoundMuted'] = aoeSound_muted;
+    console.log("muted is cached to: " + aoeSound_muted);
+
+    if(aoeSound_muted === true){
+        console.log("displaying muted");
+        hiddenMessage.innerHTML = "Unmute (m)";
+        aoe2SoundIcon.src = chrome.extension.getURL("images/aoe_icon_muted_4.png");
+    }
+    else{
+        console.log("displaying unmuted");
+        hiddenMessage.innerHTML = "Mute (m)";
+        aoe2SoundIcon.src = chrome.extension.getURL("images/aoe_icon.png");
+    }
+
+    if(aoeSound_muted){
+        aoeSound_volume = 0;
+    }
+    else{
+        if(localStorage['aoeSoundVolume']){
+            aoeSound_volume = localStorage['aoeSoundVolume'];
+            console.log("got cached slider value of " + aoeSound_volume);
+        }
+        else
+            console.log("slider cache value failed");
+
+    }
+    
+
+    slider.value = aoeSound_volume;
+    
+}
+
 /*
     This function is used to observer the overall volume of the twitch stream
     DOM, and edit the taunt volume based on the volume slider
 */
 function volumeObserver(){
     var target = document.querySelector(TWITCH_VOLUME_SLIDER_CLASS);
+
     if(target)
         volumeObserverRunning = true;
     else{
@@ -101,6 +316,8 @@ function volumeObserver(){
         return;
 
     }
+    // update slider
+    displayVolumeSlider();
 
     console.log("got volume obserever target: " + target);
 
@@ -117,7 +334,32 @@ function volumeObserver(){
     var config = { attributes: true, childList: false, characterData: false };
 
     observer.observe(target, config);
+
 }
+
+// function aoeVolumeObserver(){
+    
+//     // observer for the aoe volume slider
+//     var target = document.querySelector(AOE2_SLIDER_CLASS);
+
+//     console.log("aoe volume target: " + target)
+
+//     var observer = new MutationObserver(function(mutations) {  
+//         mutations.forEach(function(mutation) {
+//             console.log("got mutation for aoe volume.");
+//             aoeSound_volume = mutation.target.getAttribute("value");
+//             // cache our value as well
+//             chrome.storage.local.set({'aoeSoundVolume': aoeSound_volume}, function() {
+//                 console.log('Value is set to ' + value);
+//             });
+//         });
+//     });
+
+//     // configuration of the observer:
+//     var config = { attributes: true, childList: false, characterData: true };
+
+//     observer.observe(target, config);
+// }
 
 /*
     Determines the proper taunt to play by monitoring every twitch chat
@@ -242,7 +484,7 @@ function playTaunt(tauntString){
     console.log("playing taunt: " + filePath);
     
     var tauntAudio = new Audio(chrome.extension.getURL(filePath));
-    tauntAudio.volume = sound_volume;
+    tauntAudio.volume = sound_volume * aoeSound_volume;
     tauntAudio.play();
 
 }
