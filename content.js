@@ -41,6 +41,15 @@ const taunts_playing = new Set();
 
 SLEEP_TIMEOUT = 1000;
 
+// how long can each taunt be spammed in between each other in ms
+TAUNT_COOLDOWN_TIME = 500;
+
+// measure's previous taunts time since played
+prevTauntTimer = 0;
+
+// maximum amount of taunts allowed to layer at the same time
+TAUNT_MAX = 5;
+
 
 //rootObserver();
 
@@ -109,8 +118,14 @@ function displayVolumeSlider(){
 
     var volumeControls = document.querySelector(TWITCH_VOLUME_CONTROLS_DIV);
 
-    
     if(volumeControls){
+        // check if we already initialized, don't make another one otherwise
+        var aoe2ui = document.querySelector(".aoe2SliderButton");
+
+        // just return out if we already have initialized the ui of course
+        if(aoe2ui)
+            return;
+
        // var copy_slider = document.querySelector(".volume-slider__slider-container").cloneNode(true);
 
         // couldn't figure out how to copy the twitch slider so just making my own with the same css LOL
@@ -387,6 +402,7 @@ async function tauntObserver() {
 
             // here we extract each new chat message
             for (var i = 0; i < mutation.addedNodes.length; i++){
+                //playTaunt(generateRandomTaunt());
                 let chatNode = mutation.addedNodes[i];
                 
                 // extract the chat message
@@ -402,8 +418,8 @@ async function tauntObserver() {
                 if(!(taunt === "")){
                     playTaunt(taunt);
                 }
-                //else
-                    //console.log("message did not contain a taunt.");
+                else
+                    console.log("message did not contain a taunt.");
             }
                 
                 
@@ -414,6 +430,14 @@ async function tauntObserver() {
 
     observer.observe(target, config);
 
+}
+
+// for testing generates a random taunt
+function generateRandomTaunt(){
+    // just using old taunts because im lazy :)
+    var temp = Math.floor(Math.random() * OLD_TAUNT_SIZE) + 1;
+    return String(temp);
+    
 }
 
 function extractChatMessage(chatNode){
@@ -492,6 +516,23 @@ function updateVolume(slider){
 
 function playTaunt(tauntString){
 
+    // alternatively could make a queue here but I believe that's a bad idea
+    // this prevents too many taunts from layering at once
+    if(taunts_playing.size > TAUNT_MAX){
+        //console.log("MAX TAUNTS OF: " + TAUNT_MAX + " already playing, failed to play taunt " + tauntString);
+        return;
+    }
+
+    // we have a window of this time in which we can play a new taunt
+    // this prevents too much spam
+    let timer = new Date();
+    let temp = timer.getTime() - prevTauntTimer;
+    //console.log("current time: " + temp);
+    if(timer.getTime() - prevTauntTimer < TAUNT_COOLDOWN_TIME){
+        //console.log("skipping taunt " + tauntString + " not enough time waited ");
+        return;
+    }
+
     // alternatively we can load each taunt on startup...
     let filePath = SOUNDS_PATH + tauntString + SOUND_FILE_SUFFIX;
     console.log("playing taunt: " + filePath);
@@ -506,5 +547,7 @@ function playTaunt(tauntString){
     taunts_playing.add(tauntAudio);
 
     tauntAudio.play();
+
+    prevTauntTimer = timer.getTime();
 
 }
