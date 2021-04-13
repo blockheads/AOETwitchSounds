@@ -37,6 +37,8 @@ TWITCH_VOLUME_CONTROLS_DIV = ".player-controls__left-control-group";
 tauntObserverRunning=false;
 volumeObserverRunning=false;
 
+const taunts_playing = new Set();
+
 SLEEP_TIMEOUT = 1000;
 
 
@@ -210,6 +212,7 @@ function displayVolumeSlider(){
         // here we update our value based on the slider input
         slider.oninput = function() {
             aoeSound_volume = this.value;
+            updateVolume(slider);
         }
 
         // here we update the key value store for the slider
@@ -288,17 +291,17 @@ function mute(aoe2SoundIcon, slider, hiddenMessage, muted){
         aoeSound_volume = 0;
     }
     else{
-        if(localStorage['aoeSoundVolume']){
+        if(aoeSound_volume == 0 && localStorage['aoeSoundVolume']){
             aoeSound_volume = localStorage['aoeSoundVolume'];
             console.log("got cached slider value of " + aoeSound_volume);
         }
         else
-            console.log("slider cache value failed");
+            console.log("slider cache value failed or special case :)");
 
     }
     
 
-    slider.value = aoeSound_volume;
+    updateVolume(slider);
     
 }
 
@@ -477,6 +480,16 @@ function parseMessage(message){
 
 }
 
+function updateVolume(slider){
+
+    slider.value = aoeSound_volume;
+
+    for (let taunt of taunts_playing){
+        console.log("setting: " + taunt.volume + " to volume " + aoeSound_volume);
+        taunt.volume = aoeSound_volume;
+    }
+}
+
 function playTaunt(tauntString){
 
     // alternatively we can load each taunt on startup...
@@ -485,6 +498,13 @@ function playTaunt(tauntString){
     
     var tauntAudio = new Audio(chrome.extension.getURL(filePath));
     tauntAudio.volume = sound_volume * aoeSound_volume;
+
+    tauntAudio.addEventListener("ended", function(){
+        taunts_playing.delete(tauntAudio);
+    });
+
+    taunts_playing.add(tauntAudio);
+
     tauntAudio.play();
 
 }
