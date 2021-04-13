@@ -11,5 +11,6 @@ This was made entirely in javascript as a chrome extension, for more details go 
 
 ## features
 - Supports taunts 1-42, and 103-105
+- caps out max number of taunts, with cooldown period to prevent spam.
 - Dynamic volume, volume is based off of twitch stream volume for the taunts
 - Same system of playing taunt effects as the actual game as far as I can tell.
