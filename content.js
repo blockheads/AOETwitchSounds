@@ -93,11 +93,56 @@ TAUNT_MAX = 5;
 loadObserevers();
 
 function loadObserevers(){
-    console.log("attempting to load observers")
-    if(!volumeObserverRunning)
-        volumeObserver();
-    if(!tauntObserverRunning)
-        waitForChat();
+    waitForGame();
+}
+
+/*
+We only load our app if the game is AOE2 :)
+*/
+function waitForGame() {
+    const time0 = Date.now();
+    const int = setInterval(() => {
+        if (Date.now() - time0 > 3 * 2000) clearInterval(int);
+        var game = Array.from(document.querySelectorAll('span'))
+        .find(el => el.textContent === "Age of Empires II");
+
+        console.log("waited for game failed.");
+        if (game) {
+            clearInterval(int);
+            // now we can load in the observers
+            console.log("waited for game succesfull.");
+            console.log("attempting to load observers");
+            if(!volumeObserverRunning)
+                volumeObserver();
+            if(!tauntObserverRunning)
+                tauntObserver();
+        }
+        // we need to delete any left over graphics on the screen
+        else{
+            var volumeControls = document.querySelector(TWITCH_VOLUME_CONTROLS_DIV);
+
+            if(volumeControls){
+                // check if we already initialized, don't make another one otherwise
+                var superParent = document.querySelector(".superParent");
+
+                // just return out if we already have initialized the ui of course
+                if(superParent)
+                    superParent.style.display = "none";
+                
+
+                var tooltip = document.querySelector(".hoverbubble");
+
+                if(tooltip)
+                    tooltip.style.display = "none";
+
+                var slider = document.querySelector(".aoe2soundslider");
+                if(slider){
+                    slider.style.display = "none";
+                }
+
+            }
+        }
+    }, 2000);
 }
 
 // this is our listener for URL changes
@@ -119,12 +164,32 @@ function displayVolumeSlider(){
     var volumeControls = document.querySelector(TWITCH_VOLUME_CONTROLS_DIV);
 
     if(volumeControls){
-        // check if we already initialized, don't make another one otherwise
-        var aoe2ui = document.querySelector(".aoe2SliderButton");
+        var superParent = document.querySelector(".superParent");
 
         // just return out if we already have initialized the ui of course
-        if(aoe2ui)
-            return;
+
+        var done = false;
+
+        if(superParent){
+            superParent.style.display = "block";
+            done = true;
+        }
+
+        var tooltip = document.querySelector(".hoverbubble");
+
+        if(tooltip){
+            done = true
+            tooltip.style.display = "block";
+        }
+
+        var slider = document.querySelector(".aoe2soundslider");
+        if(slider){
+            done = true;
+            slider.style.display = "block";
+        }
+
+        if(done) return;
+        
 
        // var copy_slider = document.querySelector(".volume-slider__slider-container").cloneNode(true);
 
@@ -180,7 +245,7 @@ function displayVolumeSlider(){
         parentDiv.appendChild(label);
         
         var superParent = document.createElement("div");
-        superParent.className = "ScTransitionBase-eg1bd7-0jRVJEm";
+        superParent.className = "superParent";
         superParent.classList = ["tw-transition", "volume-slider__slider-container"];
 
         superParent.appendChild(parentDiv);
@@ -450,19 +515,19 @@ function extractChatMessage(chatNode){
 }
 
 
-function waitForChat() {
-    const time0 = Date.now();
-    const int = setInterval(() => {
-        if (Date.now() - time0 > 3 * 2000) clearInterval(int);
-        chat = document.querySelector(TWITCH_CHAT_CLASS);
-        console.log("waited for chat failed.");
-        if (chat) {
-            clearInterval(int);
-            console.log("waited for chat succesfull.");
-            tauntObserver();
-        }
-    }, 2000);
-}
+// function waitForChat() {
+//     const time0 = Date.now();
+//     const int = setInterval(() => {
+//         if (Date.now() - time0 > 3 * 2000) clearInterval(int);
+//         chat = document.querySelector(TWITCH_CHAT_CLASS);
+//         console.log("waited for chat failed.");
+//         if (chat) {
+//             clearInterval(int);
+//             console.log("waited for chat succesfull.");
+//             tauntObserver();
+//         }
+//     }, 2000);
+// }
 
 // this function attempts to parse a message ad executure the corresponding AOE sound
 function parseMessage(message){
