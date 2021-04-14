@@ -50,6 +50,22 @@ prevTauntTimer = 0;
 // maximum amount of taunts allowed to layer at the same time
 TAUNT_MAX = 5;
 
+// for the popup config options
+NON_AOE_OPTION_DEFAULT = false;
+
+const NON_AOE_OPTION = "nonAoe2StreamOption";
+
+function getNonAoeOption(){
+    if(localStorage[NON_AOE_OPTION]){
+        var isTrueSet = (localStorage[NON_AOE_OPTION] == 'true'); 
+        return isTrueSet;
+    }
+    return NON_AOE_OPTION_DEFAULT;
+}
+
+function setNonAoeOption(value){
+    localStorage[NON_AOE_OPTION] = value;
+}
 
 //rootObserver();
 
@@ -93,7 +109,22 @@ TAUNT_MAX = 5;
 loadObserevers();
 
 function loadObserevers(){
-    waitForGame();
+
+    // if we are enabled for non-aoe2 streams or not we wait for certian elements of twitch
+    if(getNonAoeOption()){
+        waitForChat();
+    }
+    else{
+        waitForGame();
+    }
+    
+}
+
+function launchObserevers(){
+    if(!volumeObserverRunning)
+        volumeObserver();
+    if(!tauntObserverRunning)
+        tauntObserver();
 }
 
 /*
@@ -112,10 +143,7 @@ function waitForGame() {
             // now we can load in the observers
             console.log("waited for game succesfull.");
             console.log("attempting to load observers");
-            if(!volumeObserverRunning)
-                volumeObserver();
-            if(!tauntObserverRunning)
-                tauntObserver();
+            launchObserevers();
         }
         // we need to delete any left over graphics on the screen
         else{
@@ -145,6 +173,19 @@ function waitForGame() {
     }, 2000);
 }
 
+function waitForChat() {
+    const time0 = Date.now();
+    const int = setInterval(() => {
+        if (Date.now() - time0 > 3 * 2000) clearInterval(int);
+        chat = document.querySelector(TWITCH_CHAT_CLASS);
+        console.log("waited for chat failed.");
+        if (chat) {
+            clearInterval(int);
+            launchObserevers();
+        }
+    }, 2000);
+}
+
 // this is our listener for URL changes
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
@@ -155,6 +196,20 @@ chrome.runtime.onMessage.addListener(
             volumeObserverRunning = false;
             tauntObserverRunning = false;
             loadObserevers();
+      }
+
+      if(request.message === NON_AOE_OPTION){
+
+          if(request.value != null){
+              console.log("got setter");
+            setNonAoeOption(request.value);
+          }
+          else{
+            console.log("got getter, sending back response!");
+            sendResponse(getNonAoeOption());
+            return true;
+          }
+
       }
   });
 
@@ -514,20 +569,6 @@ function extractChatMessage(chatNode){
     return messageNode.textContent;
 }
 
-
-// function waitForChat() {
-//     const time0 = Date.now();
-//     const int = setInterval(() => {
-//         if (Date.now() - time0 > 3 * 2000) clearInterval(int);
-//         chat = document.querySelector(TWITCH_CHAT_CLASS);
-//         console.log("waited for chat failed.");
-//         if (chat) {
-//             clearInterval(int);
-//             console.log("waited for chat succesfull.");
-//             tauntObserver();
-//         }
-//     }, 2000);
-// }
 
 // this function attempts to parse a message ad executure the corresponding AOE sound
 function parseMessage(message){

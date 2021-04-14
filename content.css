@@ -18,7 +18,6 @@
   height: 16px;
   border-radius: 16px;  
   box-shadow: .5px .5px;
-  /*background: url('images/vill.jpg');*/
   cursor: pointer;
 }
 
@@ -26,7 +25,6 @@
   width: 23px;
   height: 24px;
   border: 1px;
-  /*background: url('images/vill.jpg');*/
   cursor: pointer;
 }
 

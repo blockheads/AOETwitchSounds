@@ -2,10 +2,9 @@
 <html>
   <head>
     <link rel="stylesheet" href="popup.css">
-    
   </head>
 
-  <div class="logo">
+  <div class="wrapper">
     <div class ="center">
         <img src = "icons/icon128.png" class ="centerImg">
     </div>
@@ -26,14 +25,49 @@
     <h1>
         Options
     </h1>
-    <body>
+    <div class ="options">
         <div class="center">
-            <div class="horizontalElement"><label for="vehicle1">Enable For Non AOE2 LiveStreamers</label><br></div>
-            <div class="horizontalElement"><input type="checkbox" name="nonAoe2StreamOption" value="nonAoe2StreamEnabled"></div>
+            <div class="horizontalElement"><label for="checkbox">Enable For Non AOE2 LiveStreamers</label><br></div>
+            <div class="horizontalElement"><input type="checkbox" name="nonAoe2StreamOption" id="nonAoe2StreamOption"></div>
+            
         </div>
-        Please refresh after changing any options.
-    </body>
+
+        <div class="center">
+            <div class="horizontalElement"><div class=sliderLabelWrapper> <label for="tauntdelay" class="sliderLabel">Taunt Delay</label></div><br></div>
+            <div class="horizontalElement"><input type="range" min="1" max="100" value = "50" class = "aoe2slider"></div>
+            <div class="horizontalElement"><input type="text" class="sliderValue" value="0.5"></label></div>
+            <div class="sliderticks">
+                <p>0</p>
+                <p>1</p>
+                <p>2</p>
+                <p>3</p>
+                <p>4</p>
+                <p>5</p>
+            </div>
+            
+        </div>
+
+        <div class="center">
+            <div class="horizontalElement"><div class=sliderLabelWrapper> <label for="maxTaunts" class="sliderLabel">Maximum Taunts</label></div><br></div>
+            <div class="horizontalElement"><input type="range" min="1" max="100" value = "50" class = "aoe2slider"></div>
+            <div class="horizontalElement"><input type="text" class="sliderValue" value="0.5"></label></div>
+            <div class="sliderticks">
+                <p>1</p>
+                <p>5</p>
+                <p>10</p>
+                <p>15</p>
+                <p>20</p>
+            </div>
+            
+        </div>
+        <div class="center tooltip">
+            Please refresh after changing any options.
+        </div>
+        
+    </div>
     
   </div>
+
+  <script src="popup.js"></script>
   
 </html>
