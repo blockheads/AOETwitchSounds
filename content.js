@@ -64,6 +64,12 @@ const RESET_BUTTON = "resetButton";
 
 var launched = false;
 
+var currOverlayObserver;
+var currTauntObserver;
+var currPauseObserver;
+var currVolumeObserver
+
+
 var streamIsPaused=false;
 
 function getNonAoeOption(){
@@ -534,6 +540,10 @@ function volumeObserver(){
         console.log("got null target for volume...");
         return;
     }
+
+    if(currVolumeObserver)
+        return;
+        
     // update slider
     displayVolumeSlider();
 
@@ -553,6 +563,8 @@ function volumeObserver(){
     var config = { attributes: true, childList: false, characterData: false };
 
     observer.observe(target, config);
+
+    currVolumeObserver = observer;
 
 }
 
@@ -586,6 +598,9 @@ function pauseObserver(){
         return;
     }
 
+    if(currPauseObserver)
+        return;
+
     console.log("got pause observer: " + target);
 
     // target.addEventListener('click', function(){
@@ -608,6 +623,8 @@ function pauseObserver(){
       var config = { attributes: true, childList: false, characterData: false };
   
       observer.observe(target, config);
+
+      currPauseObserver = pauseObserver;
       
 }
 
@@ -617,6 +634,11 @@ This ensures that we can inject our volume controls ect, if not then we also bas
 function overlayObserver(){
 
     var target = document.querySelector(".video-player__overlay");
+
+    if(currOverlayObserver){
+        console.log("previous overlay observer still initialized");
+        return;
+    }
 
     var observer = new MutationObserver(function(mutations) {  
         mutations.forEach(function(mutation) {
@@ -650,6 +672,8 @@ function overlayObserver(){
       var config = { attributes: true, childList: true, characterData: false };
   
       observer.observe(target, config);
+
+      currOverlayObserver = observer;
 }
 
 // function aoeVolumeObserver(){
@@ -689,6 +713,9 @@ async function tauntObserver() {
         return;
     }
 
+    if(currTauntObserver)
+        return;
+
     console.log("got taunt obserever target: " + target);
 
     var observer = new MutationObserver(function(mutations) {  
@@ -724,6 +751,8 @@ async function tauntObserver() {
     var config = { attributes: true, childList: true, characterData: true };
 
     observer.observe(target, config);
+
+    currTauntObserver = observer;
 
 }
 
