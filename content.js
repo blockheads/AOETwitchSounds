@@ -13,6 +13,8 @@ TWITCH_CHAT_MESSAGE_CLASS = ".text-fragment";
 // DOM for volume slider
 TWITCH_VOLUME_SLIDER_CLASS = ".tw-range"
 
+TWTICH_PAUSE_BUTTON = "[data-a-target='player-play-pause-button']";
+
 // path to our sounds folder
 SOUNDS_PATH = "sounds/"
 // OGG suffix
@@ -33,9 +35,6 @@ AOE2_SLIDER_CLASS = ".aoe2soundslider";
 
 // here is the class for the volume slider, I want to add my custom volume slider for AOE sound effects next to it
 TWITCH_VOLUME_CONTROLS_DIV = ".player-controls__left-control-group";
-
-tauntObserverRunning=false;
-volumeObserverRunning=false;
 
 const taunts_playing = new Set();
 
@@ -58,6 +57,10 @@ const MAX_TAUNTS_DEFAULT = 5;
 const NON_AOE_OPTION = "nonAoe2StreamOption";
 const TAUNT_DELAY = "tauntDelay";
 const MAX_TAUNTS = "maxTaunts";
+
+var launched = false;
+
+var streamIsPaused=false;
 
 function getNonAoeOption(){
     if(localStorage[NON_AOE_OPTION]){
@@ -158,10 +161,15 @@ function initOptions(){
 }
 
 function launchObserevers(){
-    if(!volumeObserverRunning)
-        volumeObserver();
-    if(!tauntObserverRunning)
-        tauntObserver();
+    if(localStorage['launched'])
+        return;
+    localStorage['launched'] = true;
+
+    console.log("launched");
+
+    volumeObserver();
+    tauntObserver();
+    pauseObserver();
 }
 
 /*
@@ -230,8 +238,6 @@ chrome.runtime.onMessage.addListener(
 
       // every time we change the url just try to load observers
       if (request.message === 'changedURL') {
-            volumeObserverRunning = false;
-            tauntObserverRunning = false;
             loadObserevers();
       }
 
@@ -327,7 +333,7 @@ function displayVolumeSlider(){
         // no idea why I got rid of this code????
         if(localStorage['aoeSoundVolume']){
             aoeSound_volume = localStorage['aoeSoundVolume'];
-            updateVolume(slider);
+            updateVolume();
         }
         else
             slider.value = .5;
@@ -513,12 +519,9 @@ function mute(aoe2SoundIcon, slider, hiddenMessage, muted){
 function volumeObserver(){
     var target = document.querySelector(TWITCH_VOLUME_SLIDER_CLASS);
 
-    if(target)
-        volumeObserverRunning = true;
-    else{
+    if(!target){
         console.log("got null target for volume...");
         return;
-
     }
     // update slider
     displayVolumeSlider();
@@ -531,6 +534,7 @@ function volumeObserver(){
     var observer = new MutationObserver(function(mutations) {  
         mutations.forEach(function(mutation) {
             sound_volume = mutation.target.getAttribute("value");
+            updateVolume();
         });
     });
 
@@ -545,33 +549,40 @@ function volumeObserver(){
     checks the DOM for the pause button on twitch to change our taunt volume.
 */
 function pauseObserver(){
-    var target = document.querySelector(TWITCH_VOLUME_SLIDER_CLASS);
+    var target = document.querySelector(TWTICH_PAUSE_BUTTON);
 
-    if(target)
-        volumeObserverRunning = true;
-    else{
-        console.log("got null target for volume...");
+    if(!target){
+        console.log("got null target for pause...");
         return;
-
     }
-    // update slider
-    displayVolumeSlider();
 
-    console.log("got volume obserever target: " + target);
+    console.log("got pause observer: " + target);
 
-    // initialize our volume to this target
-    sound_volume = target.getAttribute("value");
+    // target.addEventListener('click', function(){
+    //     streamIsPaused = !streamIsPaused;
+    //     console.log("stream is paused");
+    //     updateVolume();
+    // });
 
     var observer = new MutationObserver(function(mutations) {  
         mutations.forEach(function(mutation) {
-            sound_volume = mutation.target.getAttribute("value");
+            var playing = mutation.target.getAttribute("data-a-player-state");
+
+            if(playing == "playing"){
+                streamIsPaused = false;
+            }
+            else{
+                streamIsPaused = true;
+            }
+            updateVolume();
         });
     });
+  
+      // configuration of the observer:
+      var config = { attributes: true, childList: false, characterData: false };
+  
+      observer.observe(target, config);
 
-    // configuration of the observer:
-    var config = { attributes: true, childList: false, characterData: false };
-
-    observer.observe(target, config);
 
 }
 
@@ -607,9 +618,7 @@ async function tauntObserver() {
 
 
     var target = document.querySelector(TWITCH_CHAT_CLASS);
-    if(target)
-        tauntObserverRunning = true;
-    else{
+    if(!target){
         console.log("got null target for taunt...");
         return;
     }
@@ -622,24 +631,24 @@ async function tauntObserver() {
 
             // here we extract each new chat message
             for (var i = 0; i < mutation.addedNodes.length; i++){
-                //playTaunt(generateRandomTaunt());
-                let chatNode = mutation.addedNodes[i];
+                playTaunt(generateRandomTaunt());
+                // let chatNode = mutation.addedNodes[i];
                 
-                // extract the chat message
-                var message = extractChatMessage(chatNode);
-                var taunt = "";
+                // // extract the chat message
+                // var message = extractChatMessage(chatNode);
+                // var taunt = "";
 
-                // now we can pass our message to get the taunt if there is one
-                if(!(message === "")){
-                    taunt = parseMessage(message);
-                }
+                // // now we can pass our message to get the taunt if there is one
+                // if(!(message === "")){
+                //     taunt = parseMessage(message);
+                // }
 
-                // play the audio corresponding to the taunt
-                if(!(taunt === "")){
-                    playTaunt(taunt);
-                }
-                else
-                    console.log("message did not contain a taunt.");
+                // // play the audio corresponding to the taunt
+                // if(!(taunt === "")){
+                //     playTaunt(taunt);
+                // }
+                // else
+                //     console.log("message did not contain a taunt.");
             }
                 
                 
@@ -710,17 +719,27 @@ function parseMessage(message){
 
 }
 
-function updateVolume(slider){
 
-    slider.value = aoeSound_volume;
+function updateVolume(slider){
+    // javascript method overloading lol :) bleh this code sux
+    if(typeof(slider) !== "undefined")
+        slider.value = aoeSound_volume;
 
     for (let taunt of taunts_playing){
-        console.log("setting: " + taunt.volume + " to volume " + aoeSound_volume);
-        taunt.volume = aoeSound_volume;
+        if(streamIsPaused){
+            taunt.volume = 0;
+        }
+        else{
+            taunt.volume = sound_volume * aoeSound_volume;
+        }
     }
 }
 
 function playTaunt(tauntString){
+
+    // obviously we don't want to play audio if the stream is paused
+    if(streamIsPaused)
+       return;
 
     // alternatively could make a queue here but I believe that's a bad idea
     // this prevents too many taunts from layering at once
