@@ -542,8 +542,8 @@ function volumeObserver(){
     }
 
     if(currVolumeObserver)
-        return;
-        
+        currVolumeObserver.disconnect();
+
     // update slider
     displayVolumeSlider();
 
@@ -598,8 +598,9 @@ function pauseObserver(){
         return;
     }
 
-    if(currPauseObserver)
-        return;
+    if(currPauseObserver){
+        currPauseObserver.disconnect();
+    }
 
     console.log("got pause observer: " + target);
 
@@ -636,8 +637,7 @@ function overlayObserver(){
     var target = document.querySelector(".video-player__overlay");
 
     if(currOverlayObserver){
-        console.log("previous overlay observer still initialized");
-        return;
+        currOverlayObserver.disconnect();
     }
 
     var observer = new MutationObserver(function(mutations) {  
@@ -714,7 +714,7 @@ async function tauntObserver() {
     }
 
     if(currTauntObserver)
-        return;
+        currTauntObserver.disconnect();
 
     console.log("got taunt obserever target: " + target);
 
