@@ -219,6 +219,8 @@ function waitForGame() {
                 }
 
             }
+
+            // TODO: disconnect all old observers
         }
     }, 2000);
 }
@@ -695,24 +697,24 @@ async function tauntObserver() {
 
             // here we extract each new chat message
             for (var i = 0; i < mutation.addedNodes.length; i++){
-                playTaunt(generateRandomTaunt());
-                // let chatNode = mutation.addedNodes[i];
+                //playTaunt(generateRandomTaunt());
+                let chatNode = mutation.addedNodes[i];
                 
-                // // extract the chat message
-                // var message = extractChatMessage(chatNode);
-                // var taunt = "";
+                // extract the chat message
+                var message = extractChatMessage(chatNode);
+                var taunt = "";
 
-                // // now we can pass our message to get the taunt if there is one
-                // if(!(message === "")){
-                //     taunt = parseMessage(message);
-                // }
+                // now we can pass our message to get the taunt if there is one
+                if(!(message === "")){
+                    taunt = parseMessage(message);
+                }
 
-                // // play the audio corresponding to the taunt
-                // if(!(taunt === "")){
-                //     playTaunt(taunt);
-                // }
-                // else
-                //     console.log("message did not contain a taunt.");
+                // play the audio corresponding to the taunt
+                if(!(taunt === "")){
+                    playTaunt(taunt);
+                }
+                else
+                    console.log("message did not contain a taunt.");
             }
                 
                 
