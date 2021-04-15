@@ -8,6 +8,10 @@ h1{
     width: 100%;
 }
 
+h2{
+    font-size: 16px;
+}
+
 div.center{
     align-items: center;
     width:100%;
@@ -29,17 +33,46 @@ img.centerImg{
     width: 30%;
     padding-left: 35%;
     padding-right: 35%;
+    margin-bottom: -30px;
+    margin-top: -20px;
 }
 
 body{
     text-align: left;
     font-size: 14px;
-    background-color: powderblue;
+    background-color: rgb(251, 255, 255)
 }
 
 .options{
-    background-color: #d6f0ff;
+    border-style: dashed;
+    padding:5px;
+    background-color: rgb(201, 221, 206);
     
+}
+
+.note{
+    padding-top:20px;
+    font-style: italic;
+}
+
+.left{
+
+    float:left;
+    width: 45%;
+    text-align: left;
+}
+
+.right{
+
+    float:right;
+    width: 45%;
+    text-align: left;
+}
+
+.description{
+    height: 140px;
+    padding-bottom: 20px;
+    text-align: center;
 }
 
 .aoe2slider {
@@ -90,9 +123,9 @@ body{
 }
 
 .sliderticks {
-    width:40%;
+    width:41%;
     display: flex;
-    margin-left: 19%;
+    margin-left: 21%;
     justify-content: space-between;
     padding: 0 20px;
 }
@@ -113,4 +146,12 @@ body{
     height: 5px;
     line-height: 20px;
     margin: -10px 0 5px 0px;
+}
+
+.reset{
+    margin-top: 20px;
+    text-align: center;
+    align-items: center;
+    margin-left: 40%;
+    margin-right: 40%;
 }

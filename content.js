@@ -51,9 +51,13 @@ prevTauntTimer = 0;
 TAUNT_MAX = 5;
 
 // for the popup config options
-NON_AOE_OPTION_DEFAULT = false;
+const NON_AOE_OPTION_DEFAULT = false;
+const TAUNT_DELAY_DEFAULT = 1.0;
+const MAX_TAUNTS_DEFAULT = 5;
 
 const NON_AOE_OPTION = "nonAoe2StreamOption";
+const TAUNT_DELAY = "tauntDelay";
+const MAX_TAUNTS = "maxTaunts";
 
 function getNonAoeOption(){
     if(localStorage[NON_AOE_OPTION]){
@@ -65,6 +69,31 @@ function getNonAoeOption(){
 
 function setNonAoeOption(value){
     localStorage[NON_AOE_OPTION] = value;
+}
+
+function getTauntDelay(){
+    if(localStorage[TAUNT_DELAY]){
+        return localStorage[TAUNT_DELAY];
+    }
+    return TAUNT_DELAY_DEFAULT;
+}
+
+function setTauntDelay(value){
+    TAUNT_COOLDOWN_TIME = value;
+    localStorage[TAUNT_DELAY] = value;
+}
+
+
+function getMaxTaunts(){
+    if(localStorage[MAX_TAUNTS]){
+        return localStorage[MAX_TAUNTS];
+    }
+    return MAX_TAUNTS_DEFAULT;
+}
+
+function setMaxTaunts(value){
+    TAUNT_MAX = value;
+    localStorage[MAX_TAUNTS] = value;
 }
 
 //rootObserver();
@@ -110,6 +139,9 @@ loadObserevers();
 
 function loadObserevers(){
 
+    // init our options here
+    initOptions();
+
     // if we are enabled for non-aoe2 streams or not we wait for certian elements of twitch
     if(getNonAoeOption()){
         waitForChat();
@@ -118,6 +150,11 @@ function loadObserevers(){
         waitForGame();
     }
     
+}
+
+function initOptions(){
+    TAUNT_MAX = getMaxTaunts();
+    TAUNT_COOLDOWN_TIME = getTauntDelay();
 }
 
 function launchObserevers(){
@@ -135,7 +172,7 @@ function waitForGame() {
     const int = setInterval(() => {
         if (Date.now() - time0 > 3 * 2000) clearInterval(int);
         var game = Array.from(document.querySelectorAll('span'))
-        .find(el => el.textContent === "Age of Empires II");
+        .find(el => el.textContent.toUpperCase().startsWith("AGE OF"));
 
         console.log("waited for game failed.");
         if (game) {
@@ -209,7 +246,28 @@ chrome.runtime.onMessage.addListener(
             sendResponse(getNonAoeOption());
             return true;
           }
+      }
 
+      if(request.message === TAUNT_DELAY){
+        if(request.value != null){
+            setTauntDelay(request.value)
+        }
+        else{
+            console.log("IN GETTER 1");
+          sendResponse(getTauntDelay());
+          return true;
+        }
+      }
+
+      if(request.message === MAX_TAUNTS){
+        if(request.value != null){
+            setMaxTaunts(request.value)
+        }
+        else{
+            console.log("IN GETTER 2");
+          sendResponse(getMaxTaunts());
+          return true;
+        }
       }
   });
 
@@ -265,6 +323,14 @@ function displayVolumeSlider(){
         slider.step = "0.01";
         slider.dataset.target = "player-volume-slider";
         slider.dataset.visible = "true";
+
+        // no idea why I got rid of this code????
+        if(localStorage['aoeSoundVolume']){
+            aoeSound_volume = localStorage['aoeSoundVolume'];
+            updateVolume(slider);
+        }
+        else
+            slider.value = .5;
 
         // idk more div shit
         var lowerDiv = document.createElement("div");
@@ -475,6 +541,40 @@ function volumeObserver(){
 
 }
 
+/*
+    checks the DOM for the pause button on twitch to change our taunt volume.
+*/
+function pauseObserver(){
+    var target = document.querySelector(TWITCH_VOLUME_SLIDER_CLASS);
+
+    if(target)
+        volumeObserverRunning = true;
+    else{
+        console.log("got null target for volume...");
+        return;
+
+    }
+    // update slider
+    displayVolumeSlider();
+
+    console.log("got volume obserever target: " + target);
+
+    // initialize our volume to this target
+    sound_volume = target.getAttribute("value");
+
+    var observer = new MutationObserver(function(mutations) {  
+        mutations.forEach(function(mutation) {
+            sound_volume = mutation.target.getAttribute("value");
+        });
+    });
+
+    // configuration of the observer:
+    var config = { attributes: true, childList: false, characterData: false };
+
+    observer.observe(target, config);
+
+}
+
 // function aoeVolumeObserver(){
     
 //     // observer for the aoe volume slider
@@ -638,6 +738,7 @@ function playTaunt(tauntString){
         //console.log("skipping taunt " + tauntString + " not enough time waited ");
         return;
     }
+
 
     // alternatively we can load each taunt on startup...
     let filePath = SOUNDS_PATH + tauntString + SOUND_FILE_SUFFIX;
