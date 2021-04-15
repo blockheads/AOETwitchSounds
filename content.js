@@ -13,7 +13,8 @@ TWITCH_CHAT_MESSAGE_CLASS = ".text-fragment";
 // DOM for volume slider
 TWITCH_VOLUME_SLIDER_CLASS = ".tw-range"
 
-TWTICH_PAUSE_BUTTON = "[data-a-target='player-play-pause-button']";
+TWITCH_PAUSE_BUTTON = "[data-a-target='player-play-pause-button']";
+TWITCH_PLAYER_CONTROLS = "[data-a-target='player-controls']";
 
 // path to our sounds folder
 SOUNDS_PATH = "sounds/"
@@ -42,12 +43,14 @@ SLEEP_TIMEOUT = 1000;
 
 // how long can each taunt be spammed in between each other in ms
 TAUNT_COOLDOWN_TIME = 500;
+TAUNT_COOLDOWN_TIME_DEFAULT = 500;
 
 // measure's previous taunts time since played
 prevTauntTimer = 0;
 
 // maximum amount of taunts allowed to layer at the same time
 TAUNT_MAX = 5;
+TAUNT_MAX_DEFAULT= 5;
 
 // for the popup config options
 const NON_AOE_OPTION_DEFAULT = false;
@@ -57,6 +60,7 @@ const MAX_TAUNTS_DEFAULT = 5;
 const NON_AOE_OPTION = "nonAoe2StreamOption";
 const TAUNT_DELAY = "tauntDelay";
 const MAX_TAUNTS = "maxTaunts";
+const RESET_BUTTON = "resetButton";
 
 var launched = false;
 
@@ -160,13 +164,14 @@ function initOptions(){
     TAUNT_COOLDOWN_TIME = getTauntDelay();
 }
 
+function resetOptions(){
+    setMaxTaunts(TAUNT_MAX_DEFAULT);
+    setTauntDelay(TAUNT_DELAY_DEFAULT);
+    setNonAoeOption(NON_AOE_OPTION_DEFAULT);
+}
+
 function launchObserevers(){
-    if(localStorage['launched'])
-        return;
-    localStorage['launched'] = true;
-
-    console.log("launched");
-
+    overlayObserver();
     volumeObserver();
     tauntObserver();
     pauseObserver();
@@ -274,6 +279,10 @@ chrome.runtime.onMessage.addListener(
           sendResponse(getMaxTaunts());
           return true;
         }
+      }
+
+      if(request.message === RESET_BUTTON){
+          resetOptions();
       }
   });
 
@@ -546,10 +555,29 @@ function volumeObserver(){
 }
 
 /*
+Helper method to update if the stream is paused or not
+*/
+function updatePaused(target){
+    console.log("updating paused");
+
+    var playing = target.getAttribute("data-a-player-state");
+
+    if(playing === "playing"){
+        console.log("stream is playing");
+        streamIsPaused = false;
+    }
+    else{
+        console.log("stream is paused");
+        streamIsPaused = true;
+    }
+    updateVolume();
+}
+
+/*
     checks the DOM for the pause button on twitch to change our taunt volume.
 */
 function pauseObserver(){
-    var target = document.querySelector(TWTICH_PAUSE_BUTTON);
+    var target = document.querySelector(TWITCH_PAUSE_BUTTON);
 
     if(!target){
         console.log("got null target for pause...");
@@ -564,17 +592,13 @@ function pauseObserver(){
     //     updateVolume();
     // });
 
+    updatePaused(target);
+
     var observer = new MutationObserver(function(mutations) {  
         mutations.forEach(function(mutation) {
-            var playing = mutation.target.getAttribute("data-a-player-state");
 
-            if(playing == "playing"){
-                streamIsPaused = false;
-            }
-            else{
-                streamIsPaused = true;
-            }
-            updateVolume();
+            updatePaused(mutation.target);
+
         });
     });
   
@@ -582,8 +606,48 @@ function pauseObserver(){
       var config = { attributes: true, childList: false, characterData: false };
   
       observer.observe(target, config);
+      
+}
 
+/*
+This ensures that we can inject our volume controls ect, if not then we also basically disable our extension
+*/
+function overlayObserver(){
 
+    var target = document.querySelector(".video-player__overlay");
+
+    var observer = new MutationObserver(function(mutations) {  
+        mutations.forEach(function(mutation) {
+
+            for (var i = 0; i < mutation.addedNodes.length; i++){
+
+                if(mutation.addedNodes[i].querySelector(TWITCH_PLAYER_CONTROLS)){
+                    console.log("added back player controls");
+                    // in this case we need to reinitialize our volume observer
+                    volumeObserver();
+                    streamIsPaused = false;
+                    updateVolume();
+                }
+            }
+
+            for (var i = 0; i < mutation.removedNodes.length; i++){
+       
+                if(mutation.removedNodes[i].querySelector(TWITCH_PLAYER_CONTROLS)){
+                    console.log("removed player controls");
+                    // here we are just going to mute our extension currently, the chat isn't displayed on the screen anyways
+                    // we can just use this variable
+                    streamIsPaused = true;
+                    updateVolume();
+                }
+            }
+
+        });
+    });
+  
+      // configuration of the observer:
+      var config = { attributes: true, childList: true, characterData: false };
+  
+      observer.observe(target, config);
 }
 
 // function aoeVolumeObserver(){

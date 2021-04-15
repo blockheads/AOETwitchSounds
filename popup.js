@@ -58,6 +58,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
     resetButton.addEventListener('click', function(){
         sendContent(RESET_BUTTON, "toggle");
+        // then just refresh
+        window.location.reload();
     });
     
 });
