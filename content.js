@@ -625,7 +625,7 @@ function pauseObserver(){
   
       observer.observe(target, config);
 
-      currPauseObserver = pauseObserver;
+      currPauseObserver = observer;
       
 }
 
