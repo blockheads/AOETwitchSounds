@@ -74,13 +74,13 @@ class TauntPlayer{
 
     play(message){
 
-        // // first parse the message
-        // let tauntString = this.parseMessage(message);
+        // first parse the message
+        let tauntString = this.parseMessage(message);
 
-        // if(tauntString === "")
-        //     return;
+        if(tauntString === "")
+            return;
 
-        let tauntString = this.generateRandomTaunt();
+        //let tauntString = this.generateRandomTaunt();
 
         // obviously we don't want to play audio if the stream is paused
         if(this.streamIsPaused){
