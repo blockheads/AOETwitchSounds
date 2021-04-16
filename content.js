@@ -14,6 +14,11 @@ function loadObserevers(){
     // init our options here
     initOptions();
 
+    // so our UI hides just when we start swapping maybe
+    if(uiManager){
+        uiManager.hide();
+    }
+
     // if we are enabled for non-aoe2 streams or not we wait for certian elements of twitch
     if(options.nonAoeOption){
         waitForChat();
