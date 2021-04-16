@@ -47,6 +47,7 @@ function launchObserevers(){
         uiManager = new UIManager();
     else{
         // in our case we can just re-attach
+        uiManager.show();
         uiManager.attach();
     }
 }
