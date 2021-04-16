@@ -3,6 +3,10 @@ var options;
 var tauntPlayer;
 var uiManager;
 
+// adding these to stop the waits
+var chatInt;
+var gameInt;
+
 loadObserevers();
 
 function loadObserevers(){
@@ -21,7 +25,8 @@ function loadObserevers(){
 }
 
 function initOptions(){
-    options = new Options();
+    if(!options)
+        options = new Options();
 }
 
 function resetOptions(){
@@ -49,6 +54,7 @@ function launchObserevers(){
         // in our case we can just re-attach
         uiManager.show();
         uiManager.attach();
+        
     }
 }
 
@@ -56,18 +62,26 @@ function launchObserevers(){
 We only load our app if the game is AOE2 :)
 */
 function waitForGame() {
+
+    if(gameInt){
+        console.log("clearing old game wait");
+        clearInterval(gameInt);
+    }
+
     const time0 = Date.now();
-    const int = setInterval(() => {
-        if (Date.now() - time0 > 3 * 2000) clearInterval(int);
+    gameInt = setInterval(() => {
+        if (Date.now() - time0 > 3 * 2000) clearInterval(gameInt);
         var game = Array.from(document.querySelectorAll('span'))
         .find(el => el.textContent.toUpperCase().startsWith("AGE OF"));
+ 
 
         console.log("waited for game failed.");
         if (game) {
-            clearInterval(int);
+            clearInterval(gameInt);
             // now we can load in the observers
             console.log("waited for game succesfull.");
             console.log("attempting to load chat now");
+
             waitForChat();
             
         }
@@ -76,22 +90,32 @@ function waitForGame() {
             if(uiManager)
                 uiManager.hide();
 
+     
             // TODO: disconnect all old observers
         }
     }, 2000);
 }
 
 function waitForChat() {
+
+    if(chatInt){
+        console.log("clearing old chat wait");
+        clearInterval(chatInt);
+    }
+
     const time0 = Date.now();
-    const int = setInterval(() => {
-        if (Date.now() - time0 > 3 * 2000) clearInterval(int);
+    chatInt = setInterval(() => {
+        if (Date.now() - time0 > 3 * 2000) clearInterval(chatInt);
         chat = document.querySelector(TWITCH_CHAT_CLASS);
         console.log("waited for chat failed.");
         if (chat) {
-            clearInterval(int);
+            clearInterval(chatInt);
             launchObserevers();
+           
         }
+       
     }, 2000);
+
 }
 
 // this is our listener for URL changes
