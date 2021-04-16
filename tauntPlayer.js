@@ -43,8 +43,8 @@ class TauntPlayer{
         var potentialTaunt = parseInt(message);
 
         // first we check the new taunts as they are the largest
-        for(var i=NEW_TAUNTS[NEW_TAUNTS.length - 1]; i >= 0; i--){
-            if(i == potentialTaunt)
+        for(var i=NEW_TAUNTS.length - 1; i >= 0; i--){
+            if(NEW_TAUNTS[i] == potentialTaunt)
                 return String(i);
         }
 
