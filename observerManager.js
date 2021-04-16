@@ -11,9 +11,14 @@ TWITCH_PLAYER_STATE = "data-a-player-state";
 class ObserverManager{
 
     constructor(){
+        this.tauntObserver = this.runTauntObserver();
+        if(!this.tauntObserver){
+            console.log("couldn't get taunt observer, not running more code");
+            return;
+        }
         this.overlayObserver = this.runOverlayObserver();
         this.pauseObserver = this.runPauseObserver();
-        this.tauntObserver = this.runTauntObserver();
+        
         this.volumeObserver = this.runVolumeObserver();
     }
 
@@ -62,6 +67,11 @@ class ObserverManager{
 
         var target = document.querySelector(TWTICH_OVERLAY);
 
+        if(!target){
+            console.log("got null target for overlayObserver...");
+            return;
+        }
+
         if(this.overlayObserver){
             this.overlayObserver.disconnect();
         }
@@ -76,7 +86,11 @@ class ObserverManager{
                         // in this case we need to reinitialize our volume observer
                         // volumeObserver();
                         // streamIsPaused = false;
-                        // updateVolume();
+                        //uiManager.show();
+
+                        // here we actually need to re-attach our controls
+                        uiManager.attach();
+                        uiManager.show();
                     }
                 }
 
@@ -88,6 +102,7 @@ class ObserverManager{
                         // we can just use this variable
                         // streamIsPaused = true;
                         // updateVolume();
+                        //uiManager.hide();
                     }
                 }
 
@@ -118,7 +133,7 @@ class ObserverManager{
         }
 
         if(this.volumeObserver)
-        this.volumeObserver.disconnect();
+            this.volumeObserver.disconnect();
 
         console.log("got volume obserever target: " + target);
 
@@ -214,5 +229,20 @@ class ObserverManager{
         tauntPlayer.updateVolume();
     }
     
+    /* 
+    This kill's all our old observers which are still running
+    */
+    kill(){
+        console.log("killing old observers");
+        if(this.tauntObserver)
+            this.tauntObserver.disconnect();
+        if(this.pauseObserver)
+            this.pauseObserver.disconnect();
+        if(this.overlayObserver)
+            this.overlayObserver.disconnect();
+        if(this.volumeObserver)
+            this.volumeObserver.disconnect();
+
+    }
 }
 

@@ -8,8 +8,6 @@ class UIManager{
     // this sucks I know sorry.
     constructor(){
 
-        var volumeControls = document.querySelector(TWITCH_VOLUME_CONTROLS_DIV);
-
         // var copy_slider = document.querySelector(".volume-slider__slider-container").cloneNode(true);
 
         // couldn't figure out how to copy the twitch slider so just making my own with the same css LOL
@@ -79,8 +77,8 @@ class UIManager{
         
         this.tooltip.appendChild(this.aoe2SoundIcon);
         this.tooltip.appendChild(this.hiddenMessage);
-        volumeControls.appendChild(this.tooltip);
-        volumeControls.appendChild(this.superParent);
+
+        this.attach();
 
         console.log("appended slider..");
 
@@ -158,6 +156,21 @@ class UIManager{
     }
 
     /*
+    This actually attaches or appends our exsiting elements to the Twitch GUI
+    */
+   attach(){
+        var volumeControls = document.querySelector(TWITCH_VOLUME_CONTROLS_DIV);
+        if(volumeControls){
+            volumeControls.appendChild(this.tooltip);
+            volumeControls.appendChild(this.superParent);
+        }
+        else{
+            console.log("failed to attach controls! Couldn't find volume controls.");
+        }
+        
+   }
+
+    /*
     Hide's our UI
     */
     hide(){
@@ -172,9 +185,9 @@ class UIManager{
     Show's our UI
     */
     show(){
-        this.superParent.style.display = "block";
-        this.tooltip.style.display = "block";
-        this.slider.style.display = "block";
+        this.superParent.style.display = "inline";
+        this.tooltip.style.display = "inline";
+        this.slider.style.display = "inline";
     }
 
 }

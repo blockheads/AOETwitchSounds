@@ -35,15 +35,20 @@ function launchObserevers(){
     if(!tauntPlayer)
         tauntPlayer = new TauntPlayer();
 
-    if(!obsereverManager)
-        obsereverManager =  new ObserverManager();
+    // if we have old observers running kill them
+    if(obsereverManager)
+        obsereverManager.kill();
+
+    obsereverManager = new ObserverManager();
 
     // inject our slider as well for now
     // update slider
     if(!uiManager)
         uiManager = new UIManager();
-    else
-        uiManager.show();
+    else{
+        // in our case we can just re-attach
+        uiManager.attach();
+    }
 }
 
 /*
@@ -61,8 +66,9 @@ function waitForGame() {
             clearInterval(int);
             // now we can load in the observers
             console.log("waited for game succesfull.");
-            console.log("attempting to load observers");
-            launchObserevers();
+            console.log("attempting to load chat now");
+            waitForChat();
+            
         }
         // we need to delete any left over graphics on the screen
         else{
