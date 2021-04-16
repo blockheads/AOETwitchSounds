@@ -98,13 +98,12 @@ class TauntPlayer{
         // we have a window of this time in which we can play a new taunt
         // this prevents too much spam
         let timer = new Date();
-        //let temp = timer.getTime() - prevTauntTimer;
+        let temp = timer.getTime() - this.prevTauntTimer;
         //console.log("current time: " + temp);
-        if(timer.getTime() - this.prevTauntTimer < options.tauntDelay){
+        if(timer.getTime() - this.prevTauntTimer < (options.tauntDelay * 1000)){
             console.log("skipping taunt " + tauntString + " not enough time waited ");
             return;
         }
-    
     
         // alternatively we can load each taunt on startup...
         let filePath = SOUNDS_PATH + tauntString + SOUND_FILE_SUFFIX;
@@ -186,6 +185,8 @@ class TauntPlayer{
     generateRandomTaunt(){
         // just using old taunts because im lazy :)
         var temp = Math.floor(Math.random() * OLD_TAUNT_SIZE) + 1;
+        console.log("generated random taunt: " +
+         temp);
         return String(temp);
     }
 
