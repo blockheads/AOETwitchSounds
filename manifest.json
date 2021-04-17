@@ -1,7 +1,7 @@
 {
     "name": "AOE Twitch Sounds",
     "description": "Plays AOE sound effects for twitch chat",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "manifest_version": 2,
     "web_accessible_resources": ["sounds/*.ogg", "images/*.jpg","images/*.png", "icons/*.png"],
     "background": {
@@ -30,6 +30,6 @@
       "32": "icons/icon32.png",
       "48": "icons/icon48.png",
       "128": "icons/icon128.png" },
-    "permissions": ["storage", "activeTab", "tabs", "webNavigation", "webRequest", "https://www.twitch.tv/"]
+    "permissions": ["storage", "tabs", "https://www.twitch.tv/"]
     
   }
