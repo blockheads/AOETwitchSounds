@@ -55,7 +55,7 @@ class UIManager{
         // add in the icon
         this.aoe2SoundIcon = document.createElement("img");
         this.aoe2SoundIcon.className = "aoe2SliderButton";
-        this.aoe2SoundIcon.src = chrome.extension.getURL("images/aoe_icon_active.png");
+        this.aoe2SoundIcon.src = chrome.extension.getURL("images/aoe_icon.png");
 
         // if we are muted just set these values to 0
 

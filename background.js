@@ -1,6 +1,14 @@
 chrome.tabs.onUpdated.addListener(function
   (tabId, changeInfo, tab) {
-    // read changeInfo data and do something with it (like read the url)
+
+    //alert(tab.url.match(/twitch.tv/));
+    if (tab.url.match(/twitch.tv/)) {
+        chrome.pageAction.show(tabId);
+    } else {
+        chrome.pageAction.hide(tabId);
+    }
+    // read changeInfo data and do something with it (like read the url)    
+
     if (changeInfo.url) {
       chrome.tabs.sendMessage( tabId, {
         message: 'changedURL',
@@ -10,19 +18,20 @@ chrome.tabs.onUpdated.addListener(function
   }
 );
 
-chrome.runtime.onInstalled.addListener(function() {
+// chrome.runtime.onInstalled.addListener(function() {
 
-  chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-    chrome.declarativeContent.onPageChanged.addRules([{
-      conditions: [new chrome.declarativeContent.PageStateMatcher({
-        // we only really want our popup menu on twitch.tv :)
-        pageUrl: {hostEquals: "www.twitch.tv"},
-      })
-      ],
-          actions: [new chrome.declarativeContent.ShowPageAction()]
-    }]);
-  });
-});
+//   chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
+//     chrome.declarativeContent.onPageChanged.addRules([{
+//       conditions: [new chrome.declarativeContent.PageStateMatcher({
+//         // we only really want our popup menu on twitch.tv :)
+//         pageUrl: {hostEquals: "www.twitch.tv"},
+//       })
+//       ],
+//           actions: [new chrome.declarativeContent.ShowPageAction()]
+//     }]);
+//   });
+// });
+
 
 // chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 //     if (changeInfo.status == 'complete') {
