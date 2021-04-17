@@ -4,7 +4,7 @@
 A chorme extension for twitch.tv which plays [age of empires 2 taunts](https://ageofempires.fandom.com/wiki/Taunts) based on twitch chat members.
 
 ## Download link
-need to add this
+Currently this extension is waiting review on the chrome web store.
 
 ## How?
 This was made entirely in javascript as a chrome extension, for more details go to https://developer.chrome.com/docs/extensions/
