@@ -13,7 +13,7 @@
     "content_scripts": [
       {
         "matches": ["https://*.twitch.tv/*","http://*.twitch.tv/*"],
-        "js": ["observerManager.js","options.js","tauntPlayer.js","uiManager.js","content.js"],
+        "js": ["constants.js","observerManager.js","options.js","tauntPlayer.js","uiManager.js","content.js"],
         "css": ["content.css"]
       }
     ],

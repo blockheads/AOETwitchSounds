@@ -13,7 +13,7 @@ class ObserverManager{
     constructor(){
         this.tauntObserver = this.runTauntObserver();
         if(!this.tauntObserver){
-            console.log("couldn't get taunt observer, not running more code");
+            //console.log("couldn't get taunt observer for AOE sounds.");
             return;
         }
         this.overlayObserver = this.runOverlayObserver();
@@ -29,7 +29,7 @@ class ObserverManager{
         var target = document.querySelector(TWITCH_PAUSE_BUTTON);
 
         if(!target){
-            console.log("got null target for pause...");
+            //console.log("got null target for pause...");
             return;
         }
 
@@ -37,7 +37,7 @@ class ObserverManager{
             this.pauseObserver.disconnect();
         }
 
-        console.log("got pause observer: " + target);
+        //console.log("got pause observer: " + target);
         this.updatePaused(target);
 
         var observer = new MutationObserver(function(mutations) {  
@@ -68,7 +68,7 @@ class ObserverManager{
         var target = document.querySelector(TWTICH_OVERLAY);
 
         if(!target){
-            console.log("got null target for overlayObserver...");
+            //console.log("got null target for overlayObserver...");
             return;
         }
 
@@ -82,7 +82,7 @@ class ObserverManager{
                 for (var i = 0; i < mutation.addedNodes.length; i++){
 
                     if(mutation.addedNodes[i].querySelector(TWITCH_PLAYER_CONTROLS)){
-                        console.log("added back player controls");
+                        //console.log("added back player controls");
                         // in this case we need to reinitialize our volume observer
                         // volumeObserver();
                         // streamIsPaused = false;
@@ -97,7 +97,7 @@ class ObserverManager{
                 for (var i = 0; i < mutation.removedNodes.length; i++){
         
                     if(mutation.removedNodes[i].querySelector(TWITCH_PLAYER_CONTROLS)){
-                        console.log("removed player controls");
+                        //console.log("removed player controls");
                         // here we are just going to mute our extension currently, the chat isn't displayed on the screen anyways
                         // we can just use this variable
                         // streamIsPaused = true;
@@ -128,14 +128,14 @@ class ObserverManager{
         var target = document.querySelector(TWITCH_VOLUME_SLIDER_CLASS);
 
         if(!target){
-            console.log("got null target for volume...");
+            //console.log("got null target for volume...");
             return;
         }
 
         if(this.volumeObserver)
             this.volumeObserver.disconnect();
 
-        console.log("got volume obserever target: " + target);
+        //console.log("got volume obserever target: " + target);
 
         // initialize our volume to this target
         tauntPlayer.sound_volume = target.getAttribute("value");
@@ -169,14 +169,14 @@ class ObserverManager{
 
         var target = document.querySelector(TWITCH_CHAT_CLASS);
         if(!target){
-            console.log("got null target for taunt...");
+            //console.log("got null target for taunt...");
             return;
         }
 
         if(this.tauntObserver)
             this.tauntObserver.disconnect();
 
-        console.log("got taunt obserever target: " + target);
+        //console.log("got taunt obserever target: " + target);
 
         var observer = new MutationObserver(function(mutations) {  
             mutations.forEach(function(mutation) {
@@ -213,16 +213,16 @@ class ObserverManager{
     Helper method to update if the stream is paused or not
     */
     updatePaused(target){
-        console.log("updating paused");
+        //console.log("Pausing AOE2 Sounds");
 
         var playing = target.getAttribute(TWITCH_PLAYER_STATE);
 
         if(playing === "playing"){
-            console.log("stream is playing");
+            //console.log("stream is playing");
             tauntPlayer.streamIsPaused = false;
         }
         else{
-            console.log("stream is paused");
+            //console.log("stream is paused");
             tauntPlayer.streamIsPaused = true;
         }
         
@@ -233,7 +233,7 @@ class ObserverManager{
     This kill's all our old observers which are still running
     */
     kill(){
-        console.log("killing old observers");
+        //console.log("killing old AOE2 observers");
         if(this.tauntObserver)
             this.tauntObserver.disconnect();
         if(this.pauseObserver)

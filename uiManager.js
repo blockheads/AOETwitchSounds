@@ -80,7 +80,7 @@ class UIManager{
 
         this.attach();
 
-        console.log("appended slider..");
+        //console.log("appended slider..");
 
         // for(var child=volumeControls.firstChild; child!==null; child=child.nextSibling) {
             
@@ -112,7 +112,7 @@ class UIManager{
             }
 
             localStorage['aoeSoundVolume'] = tauntPlayer.aoeSound_volume;
-            console.log('Slider value is cached to ' + tauntPlayer.aoeSound_volume);
+            //console.log('Slider value is cached to ' + tauntPlayer.aoeSound_volume);
 
         }
 
@@ -143,12 +143,12 @@ class UIManager{
 
     showMute(){
         if(tauntPlayer.aoeSound_muted === true){
-            console.log("displaying muted");
+            //console.log("displaying muted");
             this.hiddenMessage.innerHTML = "Unmute (m)";
             this.aoe2SoundIcon.src = chrome.extension.getURL("images/aoe_icon_muted_4.png");
         }
         else{
-            console.log("displaying unmuted");
+            //console.log("displaying unmuted");
             this.hiddenMessage.innerHTML = "Mute (m)";
             this.aoe2SoundIcon.src = chrome.extension.getURL("images/aoe_icon.png");
         }
@@ -165,7 +165,7 @@ class UIManager{
             volumeControls.appendChild(this.superParent);
         }
         else{
-            console.log("failed to attach controls! Couldn't find volume controls.");
+            //console.log("failed to attach controls! Couldn't find volume controls.");
         }
         
    }

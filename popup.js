@@ -1,8 +1,3 @@
-const NON_AOE_OPTION = "nonAoe2StreamOption";
-const TAUNT_DELAY = "tauntDelay";
-const MAX_TAUNTS = "maxTaunts";
-const RESET_BUTTON = "resetButton";
-
 const TAUNT_DELAY_LABEL = "tauntDelayLabel";
 const MAX_TAUNTS_LABEL = "maxTauntsLabel";
 
@@ -89,12 +84,11 @@ async function updateUiElement(messageContent, uiElement, func){
                 // do you work, that's it. No more unchecked error
                 if(!WARNING_MESSAGE_DISPLAYED)
                     alert("Please refresh twitch.tv to access the options menu! Your options will not be saved! " +
-                "If this error persists after refreshing the window then please post a github issue ticket.");
+                "If this error persists after refreshing the window then please post a github issue ticket. " + "Failed for " + messageContent);
                 // we should also hide the popup menu
                 WARNING_MESSAGE_DISPLAYED = true;
                 return;
               }
-              
               func(uiElement,response);
               
         });

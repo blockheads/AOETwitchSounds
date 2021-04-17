@@ -84,14 +84,14 @@ class TauntPlayer{
 
         // obviously we don't want to play audio if the stream is paused
         if(this.streamIsPaused){
-            console.log("stream is paused");
+            //console.log("stream is paused");
             return;
         }
     
         // alternatively could make a queue here but I believe that's a bad idea
         // this prevents too many taunts from layering at once
         if(this.tauntsPlaying.size > options.maxTaunts){
-            console.log("MAX TAUNTS OF: " + options.maxTaunts + " already playing, failed to play taunt " + tauntString);
+            //console.log("MAX TAUNTS OF: " + options.maxTaunts + " already playing, failed to play taunt " + tauntString);
             return;
         }
     
@@ -101,22 +101,22 @@ class TauntPlayer{
         let temp = timer.getTime() - this.prevTauntTimer;
         //console.log("current time: " + temp);
         if(timer.getTime() - this.prevTauntTimer < (options.tauntDelay * 1000)){
-            console.log("skipping taunt " + tauntString + " not enough time waited ");
+            //console.log("skipping taunt " + tauntString + " not enough time waited ");
             return;
         }
     
         // alternatively we can load each taunt on startup...
         let filePath = SOUNDS_PATH + tauntString + SOUND_FILE_SUFFIX;
-        console.log("playing taunt: " + filePath);
+        //console.log("playing taunt: " + filePath);
         
         var tauntAudio = new Audio(chrome.extension.getURL(filePath));
-        console.log("sound volume: " + this.sound_volume + " aoeSound volume: " + this.aoeSound_volume);
+        //console.log("sound volume: " + this.sound_volume + " aoeSound volume: " + this.aoeSound_volume);
         tauntAudio.volume = this.sound_volume * this.aoeSound_volume;
     
         tauntAudio.addEventListener("ended", function(){
-            console.log("event handled called, deleting audio, size is: " + tauntPlayer.tauntsPlaying.size);
+            //console.log("event handled called, deleting audio, size is: " + tauntPlayer.tauntsPlaying.size);
             tauntPlayer.tauntsPlaying.delete(tauntAudio);
-            console.log("event handled called, deleting audio, size is now updated to: " + tauntPlayer.tauntsPlaying.size);
+            //console.log("event handled called, deleting audio, size is now updated to: " + tauntPlayer.tauntsPlaying.size);
         });
     
         this.tauntsPlaying.add(tauntAudio);
@@ -146,7 +146,7 @@ class TauntPlayer{
 
             this.aoeSound_muted = muted;
             localStorage['aoeSoundMuted'] = this.aoeSound_muted;
-            console.log("muted is cached to: " + this.aoeSound_muted);
+            //console.log("muted is cached to: " + this.aoeSound_muted);
         }
         
 
@@ -156,7 +156,7 @@ class TauntPlayer{
         else{
             if(this.aoeSound_volume == 0 && localStorage['aoeSoundVolume']){
                 this.aoeSound_volume = localStorage['aoeSoundVolume'];
-                console.log("got cached slider value of " + this.aoeSound_volume);
+                //console.log("got cached slider value of " + this.aoeSound_volume);
             }
  
 

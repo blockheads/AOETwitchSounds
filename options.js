@@ -1,12 +1,7 @@
 // for the popup config options
 const NON_AOE_OPTION_DEFAULT = false;
 const TAUNT_DELAY_DEFAULT = 1.0;
-const TAUNT_MAX_DEFAULT = 5;
-
-const TAUNT_DELAY = "tauntDelay";
-const NON_AOE_OPTION = "nonAoe2StreamOption";
-const MAX_TAUNTS = "maxTaunts";
-const RESET_BUTTON = "resetButton";
+const MAX_TAUNTS_DEFAULT = 5;
 
 /*
 These values store all the values which are configurable in the popup.js options menu

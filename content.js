@@ -11,6 +11,9 @@ loadObserevers();
 
 function loadObserevers(){
 
+    // debugging first time run
+    //localStorage.clear();
+
     // init our options here
     initOptions();
 
@@ -59,7 +62,6 @@ function launchObserevers(){
         // in our case we can just re-attach
         uiManager.show();
         uiManager.attach();
-        
     }
 }
 
@@ -69,23 +71,21 @@ We only load our app if the game is AOE2 :)
 function waitForGame() {
 
     if(gameInt){
-        console.log("clearing old game wait");
+        //console.log("clearing old game wait");
         clearInterval(gameInt);
     }
 
     const time0 = Date.now();
     gameInt = setInterval(() => {
-        if (Date.now() - time0 > 3 * 2000) clearInterval(gameInt);
+        if (Date.now() - time0 > 10 * 1000) clearInterval(gameInt);
         var game = Array.from(document.querySelectorAll('span'))
         .find(el => el.textContent.toUpperCase().startsWith("AGE OF"));
  
-
-        console.log("waited for game failed.");
         if (game) {
             clearInterval(gameInt);
             // now we can load in the observers
-            console.log("waited for game succesfull.");
-            console.log("attempting to load chat now");
+            //console.log("AOE sounds found AOE, loading chat.");
+            //console.log("attempting to load chat now");
 
             waitForChat();
             
@@ -98,28 +98,28 @@ function waitForGame() {
      
             // TODO: disconnect all old observers
         }
-    }, 2000);
+    }, 1000);
 }
 
 function waitForChat() {
 
     if(chatInt){
-        console.log("clearing old chat wait");
+        //console.log("clearing old chat wait");
         clearInterval(chatInt);
     }
 
     const time0 = Date.now();
     chatInt = setInterval(() => {
-        if (Date.now() - time0 > 3 * 2000) clearInterval(chatInt);
+        if (Date.now() - time0 > 10 * 1000) clearInterval(chatInt);
         chat = document.querySelector(TWITCH_CHAT_CLASS);
-        console.log("waited for chat failed.");
+        //console.log("AOE2 Sounds unable to find chat.");
         if (chat) {
             clearInterval(chatInt);
             launchObserevers();
            
         }
        
-    }, 2000);
+    }, 1000);
 
 }
 
@@ -139,7 +139,6 @@ chrome.runtime.onMessage.addListener(
                 options.nonAoeOption = request.value;
             }
             else {
-                console.log("got getter, sending back response!");
                 sendResponse(options.nonAoeOption);
                 return true;
             }
