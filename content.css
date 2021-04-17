@@ -1,5 +1,5 @@
 .aoe2soundslider {
-  /*-webkit-appearance: none;*/
+  -webkit-appearance: none;
   width: 80%;
   height: 2px;
   border-radius: 5px;
@@ -11,20 +11,21 @@
 }
 
 .aoe2soundslider::-webkit-slider-thumb {
-  /*-webkit-appearance: none;*/
+  -webkit-appearance: none;
   background: #d3d3d3;
   /*appearance: none;*/
   width: 16px;
   height: 16px;
-  border-radius: 32px;  
+  border-radius: 16px;  
   box-shadow: .5px .5px;
   cursor: pointer;
 }
 
 .aoe2soundslider::-moz-range-thumb {
-  width: 23px;
-  height: 24px;
-  border: 1px;
+  width: 16px;
+  height: 16px;
+  box-shadow: .5px .5px;
+  border-radius: 16px;
   cursor: pointer;
 }
 
