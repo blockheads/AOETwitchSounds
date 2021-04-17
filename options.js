@@ -41,6 +41,15 @@ class Options{
     set maxTaunts(value){
         localStorage[MAX_TAUNTS] = value;
     }
+
+    /*
+    Resets all the options back to their default values
+    */
+    reset(){
+        this.nonAoeOption = NON_AOE_OPTION_DEFAULT;
+        this.tauntDelay = TAUNT_DELAY_DEFAULT;
+        this.maxTaunts = MAX_TAUNTS_DEFAULT;
+    }
 }
 
 

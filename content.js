@@ -37,12 +37,6 @@ function initOptions(){
         options = new Options();
 }
 
-function resetOptions(){
-    options.maxTaunts = TAUNT_MAX_DEFAULT;
-    options.tauntDelay = TAUNT_DELAY_DEFAULT;
-    options.nonAoeOption = NON_AOE_OPTION_DEFAULT;
-}
-
 function launchObserevers(){
 
     if(!tauntPlayer)
@@ -165,7 +159,7 @@ chrome.runtime.onMessage.addListener(
         }
 
         if (request.message === RESET_BUTTON) {
-            resetOptions();
+            options.reset();
         }
 });
 
