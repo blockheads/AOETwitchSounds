@@ -45,7 +45,7 @@ class TauntPlayer{
         // first we check the new taunts as they are the largest
         for(var i=NEW_TAUNTS.length - 1; i >= 0; i--){
             if(NEW_TAUNTS[i] == potentialTaunt)
-                return String(i);
+                return String(NEW_TAUNTS[i]);
         }
 
         // first we check the front
