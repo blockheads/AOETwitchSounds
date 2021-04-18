@@ -43,6 +43,8 @@ function launchUi(){
     // update slider
     if(!uiManager)
         uiManager = new UIManager();
+    
+    uiManager.hide();
 
 }
 
