@@ -24,8 +24,7 @@
                 Supported Taunts
             </h2>
             <ul>
-                <li>1-42</li>
-                <li>103-105</li>
+                <li>1-105</li>
             </ul>
             <div class="note">To adjust volume, there's a volume slider right next to the twitch one!</div> 
         </div>
@@ -42,9 +41,12 @@
             
         </div>
 
-        <div class="center">
+        <div class="hoverbubble">
+            <span> Sets a minimum time limit in between taunts which are playing. </span>
             <div class="horizontalElement"><div class=sliderLabelWrapper> <label for="tauntdelay" class="sliderLabel">Taunt Delay</label></div><br></div>
-            <div class="horizontalElement"><input type="range" min="0" max="5" value = "50" class = "aoe2slider" name = "tauntDelay" id="tauntDelay" step =".1"></div>
+        </div>
+        <div class="shiftedItems">
+        <div class="horizontalElement"><input type="range" min="0" max="5" value = "50" class = "aoe2slider" name = "tauntDelay" id="tauntDelay" step =".1"></div>
             <div class="horizontalElement"><input type="text" class="sliderValue" value="0.5"  id="tauntDelayLabel"></label></div>
             <div class="sliderticks">
                 <p>0</p>
@@ -54,11 +56,16 @@
                 <p>4</p>
                 <p>5</p>
             </div>
-            
+        </div>
+        
+        <div class ="spacer"></div>
+
+        <div class="hoverbubble">
+            <span class ="horizontalElement">Only allows set amount of taunts to be played at once.</span>
+            <div class="horizontalElement"><div class=sliderLabelWrapper> <label for="maxTaunts" class="sliderLabel">Maximum Taunts</label></div><br></div>
         </div>
 
-        <div class="center">
-            <div class="horizontalElement"><div class=sliderLabelWrapper> <label for="maxTaunts" class="sliderLabel">Maximum Taunts</label></div><br></div>
+        <div class="shiftedItems">
             <div class="horizontalElement"><input type="range" min="0" max="25" value = "50" class = "aoe2slider" name = "maxTaunts" id="maxTaunts" step="1"></div>
             <div class="horizontalElement"><input type="text" class="sliderValue" value="0.5" id="maxTauntsLabel"></label></div>
             <div class="sliderticks">
@@ -69,8 +76,8 @@
                 <p>20</p>
                 <p>25</p>
             </div>
-            
         </div>
+       
 
         <div class = "center">
             <button class="reset" id="resetButton">reset</button>

@@ -17,13 +17,14 @@ function loadObserevers(){
     // init our options here
     initOptions();
 
-    // so our UI hides just when we start swapping maybe
-    if(uiManager){
-        uiManager.hide();
-    }
+    if(!tauntPlayer)
+        tauntPlayer = new TauntPlayer();
+
+    launchUi();
 
     // if we are enabled for non-aoe2 streams or not we wait for certian elements of twitch
     if(options.nonAoeOption){
+        // so our UI hides just when we start swapping maybe
         waitForChat();
     }
     else{
@@ -37,26 +38,21 @@ function initOptions(){
         options = new Options();
 }
 
-function launchObserevers(){
+function launchUi(){
+    // inject our slider as well for now
+    // update slider
+    if(!uiManager)
+        uiManager = new UIManager();
 
-    if(!tauntPlayer)
-        tauntPlayer = new TauntPlayer();
+}
+
+function launchObserevers(){
 
     // if we have old observers running kill them
     if(obsereverManager)
         obsereverManager.kill();
 
     obsereverManager = new ObserverManager();
-
-    // inject our slider as well for now
-    // update slider
-    if(!uiManager)
-        uiManager = new UIManager();
-    else{
-        // in our case we can just re-attach
-        uiManager.show();
-        uiManager.attach();
-    }
 }
 
 /*
@@ -80,6 +76,9 @@ function waitForGame() {
             // now we can load in the observers
             //console.log("AOE sounds found AOE, loading chat.");
             //console.log("attempting to load chat now");
+            
+            uiManager.attach();
+            uiManager.show();
 
             waitForChat();
             
@@ -108,6 +107,12 @@ function waitForChat() {
         chat = document.querySelector(TWITCH_CHAT_CLASS);
         //console.log("AOE2 Sounds unable to find chat.");
         if (chat) {
+
+            if(options.nonAoeOption){
+                uiManager.attach();
+                uiManager.show();
+            }
+            
             clearInterval(chatInt);
             launchObserevers();
            

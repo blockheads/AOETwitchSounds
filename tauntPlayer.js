@@ -2,14 +2,8 @@
 This class handles everything involved with playing a taunt
 */
 
-// this is how many taunts we have available, we assume that we have 
-// 1- this specified number of taunts all initialized in the 'sounds' folder.
-// these are the first 42 taunts in the initial edition of the game
-OLD_TAUNT_SIZE = 42;
-
-// new taunts, I am only using 3 right now maybe add more but a lot of them don't get use
-// very often in the chat
-NEW_TAUNTS = [103,104,105];
+//update just using all the taunts including the new ones now
+TAUNT_SIZE = 105;
 
 // path to our sounds folder
 SOUNDS_PATH = "sounds/"
@@ -29,8 +23,11 @@ class TauntPlayer{
         }
         // mute button for aoeSound
         this.aoeSound_muted = false;
-        if(localStorage['aoeSoundMuted'])
+        var isTrueSet = (localStorage['aoeSoundMuted'] == 'true'); 
+
+        if(isTrueSet)
             this.aoeSound_muted = localStorage['aoeSoundMuted'];
+
     }
 
     // this function attempts to parse a message ad executure the corresponding AOE sound
@@ -42,14 +39,8 @@ class TauntPlayer{
         // aoe taunts appear to work, we can do other behaviors later
         var potentialTaunt = parseInt(message);
 
-        // first we check the new taunts as they are the largest
-        for(var i=NEW_TAUNTS.length - 1; i >= 0; i--){
-            if(NEW_TAUNTS[i] == potentialTaunt)
-                return String(NEW_TAUNTS[i]);
-        }
-
         // first we check the front
-        for(var i=OLD_TAUNT_SIZE; i >= 1; i--){
+        for(var i=TAUNT_SIZE; i >= 1; i--){
 
             if(i == potentialTaunt)
                 return String(i);

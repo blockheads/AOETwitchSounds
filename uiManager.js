@@ -78,8 +78,6 @@ class UIManager{
         this.tooltip.appendChild(this.aoe2SoundIcon);
         this.tooltip.appendChild(this.hiddenMessage);
 
-        this.attach();
-
         //console.log("appended slider..");
 
         // for(var child=volumeControls.firstChild; child!==null; child=child.nextSibling) {
