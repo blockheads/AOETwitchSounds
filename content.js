@@ -7,6 +7,8 @@ var uiManager;
 var chatInt;
 var gameInt;
 
+TWITCH_GAME = "[data-a-target='stream-game-link']";
+
 loadObserevers();
 
 function loadObserevers(){
@@ -70,10 +72,14 @@ function waitForGame() {
     const time0 = Date.now();
     gameInt = setInterval(() => {
         if (Date.now() - time0 > 10 * 1000) clearInterval(gameInt);
-        var game = Array.from(document.querySelectorAll('span'))
-        .find(el => el.textContent.toUpperCase().startsWith("AGE OF"));
+
+        var game = document.querySelector(TWITCH_GAME);
+        // if(game)
+        //     console.log("got game: " + game.innerText);
  
-        if (game) {
+        if (game && game.innerText.toUpperCase().startsWith("AGE OF")) {
+            
+            //console.log("got game: " + game);
             clearInterval(gameInt);
             // now we can load in the observers
             //console.log("AOE sounds found AOE, loading chat.");
