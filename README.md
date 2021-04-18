@@ -10,10 +10,10 @@ Currently this extension is waiting review on the chrome web store and firefox w
 This was made entirely in javascript as a chrome extension, for more details go to https://developer.chrome.com/docs/extensions/
 
 ## features
-- Supports taunts 1-42, and 103-105
+- Supports taunts 1-105 in the game Age of Empires II
 - customize options for the taunts you can play, and the delay between them
 - caps out max number of taunts, with cooldown period to prevent spam.
-- Dynamic volume, volume is based off of twitch stream volume for the taunts
+- Dynamic volume, volume is based off of twitch stream volume for the taunts, also read's pausing stream and other features
 - Same system of playing taunt effects as the actual game as far as I can tell.
 
 ## Some images
