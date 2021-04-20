@@ -5,6 +5,7 @@ A chorme extension for twitch.tv which plays [age of empires 2 taunts](https://a
 
 ## Download link
 Firefox: https://addons.mozilla.org/en-US/firefox/addon/aoe-twitch-sounds/
+
 Chrome: https://chrome.google.com/webstore/detail/aoe-twitch-sounds/niodfkndhcmhngfimiajikkbolhigakj?hl=en
 
 ## How do I use this?
