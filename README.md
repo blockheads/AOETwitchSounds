@@ -11,6 +11,8 @@ A chorme extension for twitch.tv which plays [age of empires 2 taunts](https://a
 ## How do I use this?
 Just download the extension either from the firefox or chrome store, then go to an Age of Empires Twitch.tv live streamers channel, if you don't know what that is or where to go here's a link to the game category for twitch https://www.twitch.tv/directory/game/Age%20of%20Empires%20II , simply click on that link with the browser extension downloaded, and then type a number into the chat ranging from 1-105, you should hear a audio effect play.
 
+NOTE: to adjust the volume there is a slider which will appear as a tiny little AOE helmet nmxt to the twitch one!
+
 Note: If your web-browser doesn't support firefox or chrome extensions then please let me know or if it's having any issues on your browser then let me know.
 
 ## How you make?
