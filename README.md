@@ -1,15 +1,17 @@
 # AOETwitchSounds
 
-## What is this?
-A chorme extension for twitch.tv which plays [age of empires 2 taunts](https://ageofempires.fandom.com/wiki/Taunts) based on twitch chat members.
-
 ## Download link
 Firefox: https://addons.mozilla.org/en-US/firefox/addon/aoe-twitch-sounds/
 
 Chrome: https://chrome.google.com/webstore/detail/aoe-twitch-sounds/niodfkndhcmhngfimiajikkbolhigakj?hl=en
 
+## What is this?
+A chorme extension for twitch.tv which plays [age of empires 2 taunts](https://ageofempires.fandom.com/wiki/Taunts) based on twitch chat members.
+
 ## How do I use this?
-Just download the extension either from the firefox or chrome store, if your web-browser doesn't support firefox or chrome extensions then please let me know or if it's having any issues on your browser then let me know.
+Just download the extension either from the firefox or chrome store, then go to an Age of Empires Twitch.tv live streamers channel, if you don't know what that is or where to go here's a link to the game category for twitch https://www.twitch.tv/directory/game/Age%20of%20Empires%20II , simply click on that link with the browser extension downloaded, and then type a number into the chat ranging from 1-105, you should hear a audio effect play.
+
+Note: If your web-browser doesn't support firefox or chrome extensions then please let me know or if it's having any issues on your browser then let me know.
 
 ## How you make?
 This was made entirely in javascript as a chrome extension, for more details go to https://developer.chrome.com/docs/extensions/
